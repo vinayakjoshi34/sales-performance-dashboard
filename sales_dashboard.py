@@ -22,7 +22,7 @@ st.markdown("""
 if os.path.exists("sales_enterprise.db"):
     os.remove("sales_enterprise.db")
 
-st.markdown('<p class="main-header">📊 Enterprise Sales Performance Dashboard</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-header"> Enterprise Sales Performance Dashboard</p>', unsafe_allow_html=True)
 st.markdown("*12+ KPIs | YoY Growth | Moving Averages | 10+ Hours/Week Saved*")
 
 # Create database
@@ -88,10 +88,6 @@ conn.close()
 
 df['date'] = pd.to_datetime(df['date'])
 
-# ============================================
-# CALCULATE ALL 12+ KPIs
-# ============================================
-
 # Current period (last 12 months)
 current_mask = df['date'] >= (datetime.now() - timedelta(days=365))
 current_df = df[current_mask]
@@ -151,15 +147,11 @@ mom_current = df[(df['date'].dt.month == current_month) & (df['date'].dt.year ==
 mom_prev = df[(df['date'].dt.month == prev_month) & (df['date'].dt.year == current_year)]['revenue'].sum()
 mom_growth = ((mom_current - mom_prev) / mom_prev * 100) if mom_prev > 0 else 0
 
-# ============================================
-# SIDEBAR - AUTO REFRESH INFO
-# ============================================
-
-st.sidebar.header("🔄 Automated Refresh")
-st.sidebar.success("✅ Status: ACTIVE")
-st.sidebar.info("⏱️ Last Refresh: " + datetime.now().strftime('%Y-%m-%d %H:%M'))
-st.sidebar.info("💾 Time Saved: 10.5 hours/week")
-st.sidebar.info("📊 SQL Procedures: Running")
+st.sidebar.header(" Automated Refresh")
+st.sidebar.success(" Status: ACTIVE")
+st.sidebar.info(" Last Refresh: " + datetime.now().strftime('%Y-%m-%d %H:%M'))
+st.sidebar.info(" Time Saved: 10.5 hours/week")
+st.sidebar.info(" SQL Procedures: Running")
 
 st.sidebar.header("Filters")
 selected_regions = st.sidebar.multiselect("Regions", df['region_name'].unique(), default=df['region_name'].unique())
@@ -167,38 +159,31 @@ selected_regions = st.sidebar.multiselect("Regions", df['region_name'].unique(),
 # Filter data
 filtered_df = df[df['region_name'].isin(selected_regions)]
 
-# ============================================
-# DISPLAY 12 KPIs
-# ============================================
 
-st.header("📊 Key Performance Indicators (12+ Metrics)")
+st.header(" Key Performance Indicators (12+ Metrics)")
 
 # Row 1
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("💰 Total Revenue", f"${total_revenue:,.0f}", f"{revenue_growth:+.1f}% YoY")
-c2.metric("📦 Total Orders", f"{total_orders:,}", f"{orders_growth:+.1f}%")
-c3.metric("💵 Avg Order Value", f"${aov:.2f}", f"{((aov-prev_aov)/prev_aov*100):+.1f}%" if prev_aov > 0 else "0%")
-c4.metric("🏆 Top Region", top_region)
+c1.metric(" Total Revenue", f"${total_revenue:,.0f}", f"{revenue_growth:+.1f}% YoY")
+c2.metric(" Total Orders", f"{total_orders:,}", f"{orders_growth:+.1f}%")
+c3.metric(" Avg Order Value", f"${aov:.2f}", f"{((aov-prev_aov)/prev_aov*100):+.1f}%" if prev_aov > 0 else "0%")
+c4.metric(" Top Region", top_region)
 
 # Row 2
 c5, c6, c7, c8 = st.columns(4)
-c5.metric("📈 7-Day MA", f"${ma_7d:,.0f}")
-c6.metric("📉 30-Day MA", f"${ma_30d:,.0f}")
-c7.metric("📊 Revenue Variance", f"${revenue_variance:,.0f}")
-c8.metric("🎯 Target Achievement", f"{target_achievement:.1f}%")
+c5.metric(" 7-Day MA", f"${ma_7d:,.0f}")
+c6.metric(" 30-Day MA", f"${ma_30d:,.0f}")
+c7.metric(" Revenue Variance", f"${revenue_variance:,.0f}")
+c8.metric(" Target Achievement", f"{target_achievement:.1f}%")
 
 # Row 3
 c9, c10, c11, c12 = st.columns(4)
-c9.metric("📅 YoY Growth", f"{yoy_growth:.1f}%")
-c10.metric("📆 MoM Growth", f"{mom_growth:.1f}%")
-c11.metric("📦 Units Sold", f"{units_sold:,}")
-c12.metric("💹 Conversion Rate", "3.2%")
+c9.metric(" YoY Growth", f"{yoy_growth:.1f}%")
+c10.metric(" MoM Growth", f"{mom_growth:.1f}%")
+c11.metric(" Units Sold", f"{units_sold:,}")
+c12.metric(" Conversion Rate", "3.2%")
 
 st.markdown("---")
-
-# ============================================
-# CHARTS
-# ============================================
 
 col1, col2 = st.columns(2)
 
@@ -233,7 +218,7 @@ with col1:
 
 with col2:
     # Regional Performance
-    st.subheader("🌍 Revenue by Region")
+    st.subheader(" Revenue by Region")
     fig2 = px.pie(
         regional_perf, 
         values='revenue', 
@@ -245,7 +230,7 @@ with col2:
     st.plotly_chart(fig2, use_container_width=True)
 
 # Moving Averages Trend
-st.subheader("📊 Moving Averages Trend (7-Day vs 30-Day)")
+st.subheader(" Moving Averages Trend (7-Day vs 30-Day)")
 daily_revenue = df.groupby('date')['revenue'].sum().reset_index()
 daily_revenue['MA_7'] = daily_revenue['revenue'].rolling(window=7).mean()
 daily_revenue['MA_30'] = daily_revenue['revenue'].rolling(window=30).mean()
@@ -283,12 +268,12 @@ st.plotly_chart(fig3, use_container_width=True)
 # 15% REVENUE UPLIFT OPPORTUNITY
 # ============================================
 
-st.header("🚀 15% Revenue Uplift Opportunity")
+st.header(" 15% Revenue Uplift Opportunity")
 
 underperforming = regional_perf[regional_perf['achievement'] < 85]
 
 if len(underperforming) > 0:
-    st.warning(f"⚠️ {len(underperforming)} regions underperforming by >15%")
+    st.warning(f" {len(underperforming)} regions underperforming by >15%")
     
     col_a, col_b = st.columns(2)
     
@@ -308,12 +293,12 @@ if len(underperforming) > 0:
             st.info(f"**{row['region_name']}**: Close {gap:.1f}% gap = **+${potential_revenue:,.0f}** potential")
         
         total_uplift = (underperforming['revenue'] * ((avg_performance - underperforming['achievement']) / 100)).sum()
-        st.success(f"💰 **Total 15% Uplift Potential: ${total_uplift:,.0f}**")
+        st.success(f" **Total 15% Uplift Potential: ${total_uplift:,.0f}**")
 else:
-    st.success("✅ All regions performing within 15% of target!")
+    st.success(" All regions performing within 15% of target!")
 
 # Regional variance analysis
-st.subheader("📊 Regional Variance Analysis")
+st.subheader(" Regional Variance Analysis")
 variance_by_region = df.groupby(['region_name', df['date'].dt.date])['revenue'].sum().reset_index()
 variance_stats = variance_by_region.groupby('region_name')['revenue'].agg(['mean', 'std']).reset_index()
 variance_stats['cv'] = (variance_stats['std'] / variance_stats['mean']) * 100
@@ -330,11 +315,11 @@ fig4 = px.bar(
 st.plotly_chart(fig4, use_container_width=True)
 
 # Raw data
-with st.expander("📋 View Raw Data"):
+with st.expander(" View Raw Data"):
     st.dataframe(filtered_df.head(100))
 
 st.markdown("---")
-st.success("✅ **Enterprise Dashboard Loaded Successfully!** | 12+ KPIs Tracked | Automated SQL Procedures Active | 10+ Hours/Week Saved")
+st.success(" **Enterprise Dashboard Loaded Successfully!** | 12+ KPIs Tracked | Automated SQL Procedures Active | 10+ Hours/Week Saved")
 
 # Footer
 st.markdown("*Built with Streamlit | Data refreshes automatically every 10 minutes*")
